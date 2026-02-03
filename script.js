@@ -7,7 +7,8 @@ let currentMode = "text";
 let uploadedFile = null;
 let translatedPages = [];
 
-// ─── Language Name Map ─────────────────────────
+// ─── Constants ─────────────────────────────────
+const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20 MB
 const LANG_NAMES = {
   auto: "Auto Detect",
   en: "English",
@@ -155,6 +156,16 @@ function handleFileSelect(event) {
 }
 
 function setFile(file) {
+  // ── size guard ──
+  if (file.size > MAX_FILE_BYTES) {
+    alert(
+      "File is too large (" +
+        (file.size / (1024 * 1024)).toFixed(2) +
+        " MB).\nMaximum allowed size is 20 MB.",
+    );
+    return;
+  }
+
   uploadedFile = file;
   document.getElementById("fileName").textContent = file.name;
   document.getElementById("fileSize").textContent =
@@ -284,28 +295,18 @@ async function translatePdf() {
   try {
     // 1. Convert file → base64
     const base64 = await fileToBase64(uploadedFile);
-    setProgress(12, "Sending to Claude AI…");
+    setProgress(15, "Sending to Claude AI…");
 
-    // 2. Build prompt
+    // 2. Build prompt — single continuous output, no page markers
     const prompt = `You are a professional academic translator. The attached PDF is a research or journal document.
 Translate the ENTIRE document from ${srcName} to ${tgtName}.
 
 Rules:
-- Preserve all structure: headings, paragraphs, lists, figure captions, references.
+- Preserve all structure: headings, sub-headings, paragraphs, lists, figure captions, table contents, and references.
 - Use formal, scholarly register throughout.
 - Keep technical, scientific, and domain-specific terminology accurate.
-- Translate ALL pages — do not skip or summarise any content.
-- Format your output exactly as shown below, with a [Page N] marker before every page:
-
-[Page 1]
-(translated content of page 1)
-
-[Page 2]
-(translated content of page 2)
-
-… and so on for every page in the document.
-
-Output ONLY the translated text with page markers. No explanations or preamble.`;
+- Translate every part of the document — do not skip or summarise anything.
+- Output ONLY the translated text in one continuous block. No explanations or preamble.`;
 
     // 3. API call with document source
     const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -333,12 +334,12 @@ Output ONLY the translated text with page markers. No explanations or preamble.`
       }),
     });
 
-    setProgress(72, "Translating…");
+    setProgress(75, "Translating…");
     const data = await res.json();
     const fullText = data.content?.[0]?.text || "";
 
-    // 4. Parse [Page N] blocks
-    translatedPages = parsePages(fullText);
+    // 4. Store as a single block
+    translatedPages = fullText.trim() ? [{ content: fullText.trim() }] : [];
 
     setProgress(100, "Done!");
     renderPdfOutput();
@@ -364,44 +365,21 @@ function fileToBase64(file) {
 }
 
 /* ═══════════════════════════════════════════════
-   12. UTILITY — Parse "[Page N]" Markers
-   ═══════════════════════════════════════════════ */
-function parsePages(text) {
-  const pages = [];
-  const regex = /\[Page\s*(\d+)\]/gi;
-  const parts = text.split(regex);
-  // parts layout: ['prefix', '1', 'content1', '2', 'content2', …]
-
-  if (parts.length > 2) {
-    for (let i = 1; i < parts.length; i += 2) {
-      const pageNum = parts[i];
-      const content = (parts[i + 1] || "").trim();
-      if (content) pages.push({ page: pageNum, content });
-    }
-  }
-
-  // Fallback: entire output as single page
-  if (pages.length === 0 && text.trim()) {
-    pages.push({ page: "1", content: text.trim() });
-  }
-
-  return pages;
-}
-
-/* ═══════════════════════════════════════════════
    13. RENDER PDF OUTPUT INSIDE THE CARD
    ═══════════════════════════════════════════════ */
 function renderPdfOutput() {
   const container = document.getElementById("pdfPagesPreview");
-  container.innerHTML = translatedPages
-    .map(
-      (p) =>
-        `<div class="tl-page-block">
-       <div class="tl-page-label">Page ${escapeHtml(p.page)}</div>
-       <div>${escapeHtml(p.content).replace(/\n/g, "<br>")}</div>
-     </div>`,
-    )
-    .join("");
+
+  if (translatedPages.length === 0) {
+    container.innerHTML =
+      '<em style="color:var(--tl-ink-light);">No output received.</em>';
+  } else {
+    container.innerHTML = escapeHtml(translatedPages[0].content).replace(
+      /\n/g,
+      "<br>",
+    );
+  }
+
   showPdfOutput();
 }
 
@@ -409,9 +387,7 @@ function renderPdfOutput() {
    14. DOWNLOAD TRANSLATED TEXT AS .txt
    ═══════════════════════════════════════════════ */
 function downloadTranslation() {
-  const body = translatedPages
-    .map((p) => "=== Page " + p.page + " ===\n" + p.content)
-    .join("\n\n");
+  const body = translatedPages.length > 0 ? translatedPages[0].content : "";
 
   const blob = new Blob([body], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);

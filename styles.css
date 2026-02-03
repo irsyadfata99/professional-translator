@@ -334,9 +334,18 @@ body {
   background: transparent !important;
   border-radius: 8px !important;
   padding: 8px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   transition:
     background 0.2s,
     color 0.2s;
+}
+.tl-tab-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  stroke: currentColor;
 }
 .tl-pill-btn:hover:not(.active) {
   background: var(--tl-teal-pale) !important;
@@ -396,8 +405,16 @@ body {
   background: var(--tl-dropzone-hover);
 }
 .tl-drop-icon {
-  font-size: 2.4rem;
-  margin-bottom: 10px;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  display: block;
+  stroke: var(--tl-teal);
+  transition: stroke 0.25s;
+}
+.tl-dropzone:hover .tl-drop-icon,
+.tl-dropzone.dragover .tl-drop-icon {
+  stroke: var(--tl-teal-light);
 }
 .tl-drop-text {
   color: var(--tl-ink-mid);
@@ -422,7 +439,9 @@ body {
   transition: background 0.35s;
 }
 .tl-file-icon {
-  font-size: 1.5rem;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
 .tl-file-name {
   display: block;

@@ -61,7 +61,7 @@
         </h1>
         <p class="tl-hero-sub">
           Professional-grade translation built for researchers, academics, and
-          journals.<br />Upload text or entire PDFs — up to 50 pages — and get
+          journals.<br />Upload text or entire PDFs up to 20 MB — and get
           contextually accurate, publication-ready results.
         </p>
       </div>
@@ -150,7 +150,22 @@
                   role="tab"
                   onclick="switchMode('text')"
                 >
-                  ✎ Text
+                  <svg
+                    class="tl-tab-icon"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M4 2h8l4 4v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"
+                    />
+                    <path d="M12 2v4h4" />
+                    <path d="M7 10h6M7 13h4" />
+                  </svg>
+                  Text
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -160,7 +175,22 @@
                   role="tab"
                   onclick="switchMode('pdf')"
                 >
-                  ☐ PDF Upload
+                  <svg
+                    class="tl-tab-icon"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M4 2h8l4 4v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"
+                    />
+                    <path d="M12 2v4h4" />
+                    <path d="M7 9h6M7 12h6M7 15h3" />
+                  </svg>
+                  PDF Upload
                 </button>
               </li>
             </ul>
@@ -195,12 +225,26 @@
               id="dropArea"
               onclick="document.getElementById('fileInput').click()"
             >
-              <div class="tl-drop-icon">📄</div>
+              <svg
+                class="tl-drop-icon"
+                viewBox="0 0 48 48"
+                fill="none"
+                stroke="var(--tl-teal)"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 4h16l8 8v28a4 4 0 01-4 4H12a4 4 0 01-4-4V8a4 4 0 014-4z"
+                />
+                <path d="M28 4v8h8" />
+                <path d="M18 24h12M18 29h12M18 34h8" />
+              </svg>
               <p class="tl-drop-text">
                 <strong>Drag & drop your PDF here</strong>
               </p>
               <p class="tl-drop-sub">
-                or click to browse — up to 50 pages supported
+                or click to browse · max <strong>20 MB</strong>
               </p>
               <input
                 type="file"
@@ -216,7 +260,23 @@
               class="tl-file-info d-none align-items-center gap-3 mt-3"
               id="pdfInfo"
             >
-              <span class="tl-file-icon">📑</span>
+              <svg
+                class="tl-file-icon"
+                viewBox="0 0 28 28"
+                fill="none"
+                stroke="var(--tl-teal)"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                width="28"
+                height="28"
+              >
+                <path
+                  d="M7 2h9l5 5v15a3 3 0 01-3 3H7a3 3 0 01-3-3V5a3 3 0 013-3z"
+                />
+                <path d="M16 2v5h5" />
+                <path d="M10 13h8M10 17h8M10 21h5" />
+              </svg>
               <div class="flex-grow-1">
                 <strong class="tl-file-name" id="fileName">document.pdf</strong>
                 <span class="tl-file-size" id="fileSize">2.4 MB</span>
@@ -302,9 +362,9 @@
             <div class="card tl-feat-card h-100 shadow-sm">
               <div class="card-body p-4">
                 <div class="tl-feat-icon">📚</div>
-                <h5 class="tl-feat-title">Multi-Page PDF</h5>
+                <h5 class="tl-feat-title">Large PDF Support</h5>
                 <p class="tl-feat-desc">
-                  Upload research papers or journals up to 50 pages. The entire
+                  Upload research papers or journals up to 20 MB. The entire
                   document is translated with consistent context and
                   terminology.
                 </p>
