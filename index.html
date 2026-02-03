@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TransLumen — Professional AI Translation</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap CSS (from node_modules after npm install) -->
+    <link
+      rel="stylesheet"
+      href="node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- ─── Noise Overlay ─── -->
+    <div class="noise-overlay"></div>
+
+    <!-- ─── Navbar ─── -->
+    <nav class="navbar tl-navbar sticky-top" id="mainNavbar">
+      <div
+        class="container-lg d-flex align-items-center justify-content-between"
+      >
+        <a class="navbar-brand tl-logo" href="#">Trans<span>Lumen</span></a>
+        <div class="d-flex align-items-center gap-4">
+          <a href="#translate" class="tl-nav-link">Translate</a>
+          <a href="#features" class="tl-nav-link">Features</a>
+
+          <!-- Dark Mode Toggle -->
+          <div
+            class="tl-theme-toggle"
+            id="themeToggle"
+            title="Toggle dark mode"
+          >
+            <span class="tl-toggle-icon tl-icon-light">☀️</span>
+            <div class="tl-toggle-track">
+              <div class="tl-toggle-thumb"></div>
+            </div>
+            <span class="tl-toggle-icon tl-icon-dark">🌙</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ─── Hero ─── -->
+    <section class="tl-hero">
+      <div class="container">
+        <div class="tl-badge mb-4">
+          <span class="tl-badge-dot"></span> Powered by Claude AI
+        </div>
+        <h1 class="tl-hero-title">
+          Translate with<br /><em>scholarly precision</em>
+        </h1>
+        <p class="tl-hero-sub">
+          Professional-grade translation built for researchers, academics, and
+          journals.<br />Upload text or entire PDFs — up to 50 pages — and get
+          contextually accurate, publication-ready results.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── Translator Card ─── -->
+    <section class="tl-translator-section" id="translate">
+      <div class="container">
+        <div class="card tl-card shadow-sm">
+          <!-- Language Bar -->
+          <div class="tl-lang-bar">
+            <div class="tl-lang-group">
+              <label class="tl-label">From</label>
+              <select class="form-select tl-select" id="sourceLang">
+                <option value="auto">Auto Detect</option>
+                <option value="en">English</option>
+                <option value="id">Indonesian</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="es">Spanish</option>
+                <option value="it">Italian</option>
+                <option value="pt">Portuguese</option>
+                <option value="zh">Chinese (Simplified)</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="ar">Arabic</option>
+                <option value="hi">Hindi</option>
+                <option value="ru">Russian</option>
+                <option value="nl">Dutch</option>
+                <option value="sv">Swedish</option>
+                <option value="pl">Polish</option>
+                <option value="th">Thai</option>
+                <option value="vi">Vietnamese</option>
+                <option value="ms">Malay</option>
+              </select>
+            </div>
+
+            <button class="btn tl-swap-btn" id="swapBtn" title="Swap languages">
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
+              </svg>
+            </button>
+
+            <div class="tl-lang-group">
+              <label class="tl-label">To</label>
+              <select class="form-select tl-select" id="targetLang">
+                <option value="en">English</option>
+                <option value="id">Indonesian</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="es">Spanish</option>
+                <option value="it">Italian</option>
+                <option value="pt">Portuguese</option>
+                <option value="zh">Chinese (Simplified)</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="ar">Arabic</option>
+                <option value="hi">Hindi</option>
+                <option value="ru">Russian</option>
+                <option value="nl">Dutch</option>
+                <option value="sv">Swedish</option>
+                <option value="pl">Polish</option>
+                <option value="th">Thai</option>
+                <option value="vi">Vietnamese</option>
+                <option value="ms">Malay</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Mode Tabs (Bootstrap Nav Pills) -->
+          <div class="tl-mode-tabs px-4 pt-4">
+            <ul class="nav nav-pills tl-pills" id="modeTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active tl-pill-btn"
+                  id="textTabBtn"
+                  role="tab"
+                  onclick="switchMode('text')"
+                >
+                  ✎ Text
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link tl-pill-btn"
+                  id="pdfTabBtn"
+                  role="tab"
+                  onclick="switchMode('pdf')"
+                >
+                  ☐ PDF Upload
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Text Mode Panel -->
+          <div class="tl-text-mode row g-4 px-4 pt-4" id="textMode">
+            <div class="col-md-6">
+              <label class="tl-label mb-2">Source Text</label>
+              <textarea
+                class="form-control tl-textarea"
+                id="inputText"
+                placeholder="Paste your text here…"
+                oninput="updateCharCount()"
+              ></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="tl-label mb-2">Translation</label>
+              <textarea
+                class="form-control tl-textarea tl-textarea-output"
+                id="outputText"
+                placeholder="Translation will appear here…"
+                readonly
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- PDF Mode Panel -->
+          <div class="tl-pdf-mode px-4 pt-4" id="pdfMode" style="display: none">
+            <div
+              class="tl-dropzone"
+              id="dropArea"
+              onclick="document.getElementById('fileInput').click()"
+            >
+              <div class="tl-drop-icon">📄</div>
+              <p class="tl-drop-text">
+                <strong>Drag & drop your PDF here</strong>
+              </p>
+              <p class="tl-drop-sub">
+                or click to browse — up to 50 pages supported
+              </p>
+              <input
+                type="file"
+                id="fileInput"
+                accept=".pdf"
+                class="d-none"
+                onchange="handleFileSelect(event)"
+              />
+            </div>
+
+            <!-- File Info Bar -->
+            <div
+              class="tl-file-info d-none align-items-center gap-3 mt-3"
+              id="pdfInfo"
+            >
+              <span class="tl-file-icon">📑</span>
+              <div class="flex-grow-1">
+                <strong class="tl-file-name" id="fileName">document.pdf</strong>
+                <span class="tl-file-size" id="fileSize">2.4 MB</span>
+              </div>
+              <button class="btn tl-remove-btn" onclick="removeFile()">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="tl-progress-wrap px-4 pt-3 d-none" id="progressWrap">
+            <div class="d-flex justify-content-between tl-progress-labels mb-1">
+              <span id="progressText">Translating…</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress tl-progress-bar">
+              <div
+                class="progress-bar tl-progress-fill"
+                role="progressbar"
+                id="progressFill"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          <!-- PDF Translated Output -->
+          <div class="tl-pdf-output px-4 pt-4 d-none" id="pdfOutput">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="tl-output-title mb-0">📋 Translated Document</h6>
+              <button
+                class="btn btn-sm tl-btn-download"
+                onclick="downloadTranslation()"
+              >
+                ⬇ Download .txt
+              </button>
+            </div>
+            <div class="tl-pages-preview" id="pdfPagesPreview"></div>
+          </div>
+
+          <!-- Action Bar -->
+          <div
+            class="tl-action-bar d-flex align-items-center justify-content-between px-4 py-3 mt-3"
+          >
+            <span class="tl-char-count" id="charCount">0 characters</span>
+            <button
+              class="btn tl-btn-translate"
+              id="translateBtn"
+              onclick="translate()"
+            >
+              <span class="tl-spinner d-none"></span>
+              <span class="tl-btn-text">Translate</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Features Section ─── -->
+    <section class="tl-features-section" id="features">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="tl-section-title">Why researchers choose TransLumen</h2>
+          <p class="tl-section-sub">
+            Built around the needs of academic and professional translation
+          </p>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-3">
+            <div class="card tl-feat-card h-100 shadow-sm">
+              <div class="card-body p-4">
+                <div class="tl-feat-icon">🔬</div>
+                <h5 class="tl-feat-title">Academic Accuracy</h5>
+                <p class="tl-feat-desc">
+                  Claude AI understands domain-specific terminology in science,
+                  medicine, law, and humanities — preserving meaning across
+                  languages.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card tl-feat-card h-100 shadow-sm">
+              <div class="card-body p-4">
+                <div class="tl-feat-icon">📚</div>
+                <h5 class="tl-feat-title">Multi-Page PDF</h5>
+                <p class="tl-feat-desc">
+                  Upload research papers or journals up to 50 pages. The entire
+                  document is translated with consistent context and
+                  terminology.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card tl-feat-card h-100 shadow-sm">
+              <div class="card-body p-4">
+                <div class="tl-feat-icon">🌍</div>
+                <h5 class="tl-feat-title">19 Languages</h5>
+                <p class="tl-feat-desc">
+                  Supports major world languages with auto-detection. Optimized
+                  for professional and scholarly register across all pairs.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card tl-feat-card h-100 shadow-sm">
+              <div class="card-body p-4">
+                <div class="tl-feat-icon">⚡</div>
+                <h5 class="tl-feat-title">Real-Time AI</h5>
+                <p class="tl-feat-desc">
+                  Powered by Claude — Anthropic's frontier model. Get
+                  high-accuracy, context-aware results optimized for
+                  professional content.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Footer ─── -->
+    <footer class="tl-footer">
+      <div class="container text-center">
+        <p class="mb-0">
+          © 2026 TransLumen. Powered by
+          <a href="#" class="tl-footer-link">Anthropic Claude</a>. Built for
+          scholarly excellence.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle (from node_modules after npm install) -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+  </body>
+</html>
